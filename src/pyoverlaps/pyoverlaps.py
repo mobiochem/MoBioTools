@@ -7,6 +7,7 @@ from copy import deepcopy
 from collections import OrderedDict
 from permutations import readcrd, perm, get_d_indices,\
         perm_d_indices, perm_matrix, perm_mixed_matrix, swap_bas
+import numpy as np
 #import sys
 
 # Global Functions

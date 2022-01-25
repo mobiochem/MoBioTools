@@ -1,0 +1,9 @@
+&main
+tpl   = nwchem
+top   = dG-ES2.prmtop
+traj  = md-im.nc
+qmmask = :1,2
+geoms = 303
+solvmask = :WAT
+closest = 5
+&end

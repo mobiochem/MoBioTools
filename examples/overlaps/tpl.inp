@@ -1,0 +1,17 @@
+&GATEWAY
+Title = p-AZO molecule
+Coord = azo.xyz
+Group = C1 
+Basis set = cc-pVDZ spherical all
+XFIeld = charges.dat
+&SEWARD
+&SCF
+&RASSCF
+Title = rasscf 
+Symmetry = 1
+Spin = 1
+frozen = 0
+Nactel = 12 0 0
+Inactive = 50
+Ras2 = 10
+CiRoot = 10 10 1

@@ -1,0 +1,28 @@
+&header
+%NprocShared=4
+%mem=4GB
+%chk=gau.chk
+&end
+
+&route
+#P M062X/gen Charge NoSym
+&end
+
+&externchg
+&end
+
+&bsse
+&end
+
+&chgspin
+0,5,0,3,0,3
+&end
+
+&basis
+C H O 0
+6-31g*
+****
+N 0
+6-31g**
+****
+&end

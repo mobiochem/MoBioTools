@@ -1,0 +1,35 @@
+&header
+title = p-AZO molecule
+group = C1
+basis set = cc-pVDZ spherical all
+RICD
+&end
+
+&seward
+&end
+
+&chgspin
+0,1,0,1,0,1
+&end
+
+&bsse
+&end
+
+&externchg
+&end
+
+&guess
+inporb
+&end
+
+&rasscf
+title = rasscf
+symmetry = 1
+spin = 1
+nactel = 12 0 0
+frozen = 0
+inactive = 50
+ras2 = 10
+ciroot = 10 10 1
+&end
+

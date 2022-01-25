@@ -9,6 +9,7 @@ export PYOVLP=$MBTHOME/src/pyoverlaps
 export PATH=$MBTHOME:$PATH
 export PATH=$MBTANALYSIS:$PATH
 export PATH=$PYOVLP:$PATH
+export LD_LIBRARY_PATH=$PYOVLP:$LD_LIBRARY_PATH
 
 
 # Molcas

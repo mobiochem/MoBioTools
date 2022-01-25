@@ -1,21 +1,20 @@
-from ctypes import *
+from ctypes import cdll, POINTER, c_long, c_double
 import numpy as np
 import os
 import platform
 
-cdir = os.path.dirname(os.path.abspath(__file__))
+# Include intwrap.so location on the  DL_LIBRARY_PATH 
 
 def symmetrize(M):
     """Symmetryze an upper triangular matrix"""
     return(M + np.transpose(M) - np.diagflat(M.diagonal()))
 
 def wrap_ovlp_matrix():
-#    cdir  = os.getcwd()
     pform = platform.system()
     if(pform == "Linux"):
-        dll  = cdll.LoadLibrary(cdir + "/intwrap.so")
+        dll  = cdll.LoadLibrary("intwrap.so")
     elif(pform == "Windows"):
-        dll = cdll.LoadLibrary(cdir + "/intwrap.dll")
+        dll = cdll.LoadLibrary("intwrap.dll")
     else:
         raise OSError("Platform " + pform + " currently not supported")
     func = dll.intOvlpCrt
@@ -28,12 +27,11 @@ def wrap_ovlp_matrix():
 def wrap_ovlp_matrix_mix():
     """Compute overlap matrix between two sets of 
     different basis functions"""
-#    cdir = os.getcwd()
     pform = platform.system()
     if(pform == "Linux"):
-        dll = cdll.LoadLibrary(cdir + "/intwrap.so")
+        dll = cdll.LoadLibrary("intwrap.so")
     elif(pform == "Windows"):
-        dll = cdll.LoadLibrary(cdir + "/intwrap.dll")
+        dll = cdll.LoadLibrary("intwrap.dll")
     else:
         raise OSError("Platform " + pform + " currently not supported")
     func = dll.intOvlpCrtMix

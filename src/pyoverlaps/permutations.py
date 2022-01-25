@@ -4,6 +4,11 @@ from constants import ATOMNUM
 from time import process_time
 
 # Non-standard (i.e. non-pyscf library) Basis sets
+ATOMNUM = {1:"H", 3: "Li", 4: "Be", 6: "C", 7: "N", 8: "O", 9: "F",\
+           11: "Na", 12: "Mg", 13: "Al", 14: "Si", 15: "P", 16: "S",\
+           17: "Cl", 19: "K", 20: "Ca", 21: "Sc", 22:"Ti", 23:"V",\
+           24: "Cr", 25: "Mn", 26: "Fe", 27: "Co", 28: "Ni", 29: "Cu",\
+           30: "Zn", 35: "Br", 46: "Pd", 47: "Ag", 78: "Pt", 79: "Au"}
 
 def readcrd(infile):
     """Read atom coordinates from any file containing

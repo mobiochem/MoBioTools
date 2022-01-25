@@ -5,7 +5,7 @@ from copy import deepcopy
 from collections import OrderedDict
 from argparse import ArgumentParser
 import os
-from parser import QMtemplate
+from common_parser import QMtemplate
 from nwchem_parser import NWChemtpl
 from gau_parser import Gautpl
 from molcas_parser import Molcastpl

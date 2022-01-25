@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import numpy as np
-from constants import ATOMNUM
 from time import process_time
 
 # Non-standard (i.e. non-pyscf library) Basis sets

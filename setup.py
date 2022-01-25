@@ -27,8 +27,7 @@ setup(
                    'src/pyoverlaps/matrixio.py',
                    'src/pyoverlaps/parse_molden.py',
                    'src/pyoverlaps/pyoverlaps.py',
-                   'scripts/get_num_geometries.py',
-                   'src/pyoverlaps/intwrap.so'],
+                   'scripts/get_num_geometries.py'],
         python_requires = '>=3.6',
         install_requires = ["numpy",
                             "pytraj"])

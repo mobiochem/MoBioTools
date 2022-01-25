@@ -5,8 +5,10 @@
 # MoBioTools home directory
 export MBTHOME=""
 export MBTANALYSIS=$MBTHOME/scripts
+export PYOVLP=$MBTHOME/src/pyoverlaps
 export PATH=$MBTHOME:$PATH
 export PATH=$MBTANALYSIS:$PATH
+export PATH=$PYOVLP:$PATH
 
 
 # Molcas

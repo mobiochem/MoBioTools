@@ -1,2 +1,2 @@
 # MoBioTools
-A simple yet versatile toolkit to setup quantum mechanics/molecular mechanics (QM/MM) calculations from molecular dynamics trajectories.
+A simple yet versatile toolkit to automatically setup quantum mechanics/molecular mechanics (QM/MM) calculations for ensembles of geometries generated from molecular dynamics trajectories.

@@ -40,3 +40,29 @@ and finally, carry out the installation itself
 ```
 python3 setup.py install
 ```
+
+
+# Usage
+The tools consist of two scripts with different functionalities:
+1. The input generator (main_qminputs.py, -h option to visualize the arguments it takes), which is compatible with the Gaussian, NWChem and (Open)Molcas quantum mechanics (QM) programs, takes an MD trajectory in amber format and generates an input file for all the snapshots selected by the user. The program takes two input files as arguments: 
+
+- A main input file (-i option) on which the user defines the names of the trajectory file, the topology file, the desired QM program, the QM region to consider among others.
+
+- A template file, on which the specifics of the QM calulation are defined.
+
+Some examples are provided on the examples/inputs folder. 
+```
+cd examples/inputs
+```
+For example, in the case of a NWChem calculation, copy the trajectory and the topology files on the examples/inputs folder
+```
+cp GUA-O2-S5.* nwchem_input/.
+
+cd nwchem_input
+```
+then execute the main_qminputs.py script as follows:
+```
+main_qminputs.py -i nwchem.main.in -t nwchem.tpl.inp
+```
+
+2. The program to automaticall correct the active space of a set of CASSCF calculations an ensemble of geometries (pyoverlaps.py, -h option to visualize the arguments it takes). 

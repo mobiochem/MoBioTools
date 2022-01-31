@@ -9,6 +9,7 @@ from common_parser import QMtemplate
 from nwchem_parser import NWChemtpl
 from gau_parser import Gautpl
 from molcas_parser import Molcastpl
+from orca_parser import Orcatpl
 
 class Main(object):
 
@@ -70,6 +71,8 @@ def qm_choice(infile = None, tpl = None):
         return(Gautpl(infile))
     elif(tpl == "molcas"):
         return(Molcastpl(infile))
+    elif(tpl == "orca"):
+        return(Orcatpl(infile))
     else:
         return("No function returned")
 

@@ -45,7 +45,7 @@ class QMtemplate(object):
 
         uname = "&" + name # e.g: &dft
         section = []
-        print("Parsing section: " + uname)
+#        print("Parsing section: " + uname)
         for line in lines[lines.index(uname) + 1:]:
             row = line.split()
             if(("&" in line) or (len(row) == 0)):
@@ -90,7 +90,7 @@ class QMtemplate(object):
 def write_input_bsse(funct):
     def wrapper(*args, **kwargs):
         # args[0] corresponds to self
-        print("args[0] = ", args[0])
+#        print("args[0] = ", args[0])
         bsse    = args[0].bsse
         chgspin = args[0].chgspin
 

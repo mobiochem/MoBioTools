@@ -130,9 +130,9 @@ class Molcastpl(QMtemplate):
         """Add point charges file name in header section"""
         if(self.namelist["externchg"] != None):
             if(self.bsse != None and prename != None):
-                chgfile = "charges_{:s}_geom{:d}.dat".format(prename, igeom)
+                chgfile = "charges_{:s}_geom{:d}.xyz".format(prename, igeom)
             else:
-                chgfile = "charges_geom{:d}.dat".format(igeom)
+                chgfile = "charges_geom{:d}.xyz".format(igeom)
             f.write("Xfield = {:s}\n".format(chgfile))
 
         

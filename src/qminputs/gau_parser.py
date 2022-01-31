@@ -54,6 +54,7 @@ class Gautpl(QMtemplate):
             self._write_chgspin(f, charge, spin)
             self._write_geometry(f, igeom, bqmask = bqmask)
             self._write_point_charges(f, igeom, null_charges)
+            self._write_basis(f)
             self._write_final_space(f)
     
             for attr in self.namelist.keys():
@@ -67,7 +68,7 @@ class Gautpl(QMtemplate):
         """Write Link0 commands"""
         for iopt in self.namelist["header"]:
             if("chk" in iopt.lower()):
-                f.write("chk=" + outfile.replace(".com", ".chk") + "\n")
+                f.write("%chk=" + outfile.replace(".com", ".chk") + "\n")
             else:
                 f.write(iopt + "\n")
 
@@ -140,15 +141,17 @@ class Gautpl(QMtemplate):
                 for cnt, icrd in enumerate(self.traj[self.chgmask].xyz[igeom]):
                     ichg = charges[cnt]
                     f.write(fmt.format(*icrd, ichg) + "\n")
+            f.write("\n")
         else:
             pass
 
         
     def _write_other(self, f, attribute):
         """Write other nwchem sections"""
-        exclude  = ["header", "chgspin", "route", "externchg", "bsse"]
+#        exclude  = ["header", "chgspin", "route", "externchg", "bsse"]
+        exclude  = ["header", "chgspin", "route", "externchg", "bsse", "basis"]
         keys     = np.setdiff1d(list(self.namelist.keys()), exclude)
-        print("other keys = ", keys)
+#        print("other keys = ", keys)
         has_attr = (attribute in keys and self.namelist[attribute] != None)
 
         if(has_attr):
@@ -156,5 +159,11 @@ class Gautpl(QMtemplate):
             for iopt in self.namelist[attribute]:
                 f.write(iopt + "\n")
             f.write("\n")
-
+    
+    def _write_basis(self, f):
+        """Write basis at the bottom if the /gen keyword is evidenced on the route"""
+        if("/gen" in self.route[0].lower()):
+            for iopt in self.namelist["basis"]:
+                f.write(iopt + "\n")
+            f.write("\n")
 

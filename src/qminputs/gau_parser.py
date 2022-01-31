@@ -141,6 +141,7 @@ class Gautpl(QMtemplate):
                 for cnt, icrd in enumerate(self.traj[self.chgmask].xyz[igeom]):
                     ichg = charges[cnt]
                     f.write(fmt.format(*icrd, ichg) + "\n")
+            f.write("\n")
         else:
             pass
 

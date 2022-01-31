@@ -62,7 +62,7 @@ cd nwchem_input
 ```
 then execute the main_qminputs.py script as follows:
 ```
-main_qminputs.py -i nwchem.main.in -t nwchem.tpl.inp
+main_qminputs.py -i nwchem.main.in -t nwchem.tpl.inp > output.dat
 ```
 
 2. The program to automaticall correct the active space of a set of CASSCF calculations an ensemble of geometries (pyoverlaps.py, -h option to visualize the arguments it takes). 

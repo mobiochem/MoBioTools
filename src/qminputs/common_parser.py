@@ -104,20 +104,24 @@ def write_input_bsse(funct):
                 charge = chgspin[0].split(",")[2*idc]
                 spin   = chgspin[0].split(",")[2*idc + 1]
                 bqmask = bsse[bqidx[cnt]][bsse[bqidx[cnt]].index("=")+1:].replace(" ", "")
-                print("bqmask ", imon, bqmask)
+                print("Writing input file for monomer: {}".format(imon))
+                print("Ghost atoms on monomer {}: {}".format(imon, bqmask))
                 funct(*args, **kwargs, 
                       charge  = charge, 
                       spin    = spin,
                       null_charges = null_charges[cnt],
                       prename = imon,
-                      bqmask = bqmask) 
+                      bqmask = bqmask)
+                print("\n")
             # Call write_input method for complex
             charge = chgspin[0].split(",")[0]
             spin   = chgspin[0].split(",")[1]
+            print("Writing input file for complex")
             funct(*args, **kwargs,
                   charge  = charge, 
                   spin    = spin,
                   prename = "complex")
+            print("\n")
         else:
             charge = chgspin[0].split(",")[0]
             spin   = chgspin[0].split(",")[1]

@@ -17,7 +17,11 @@ class Orcatpl(QMtemplate):
         # Attrubutes specific to gaussian
         self._infile     = infile
         self._template   = "orca"
-#        self.namelist.update({"route": None, "scrf": None})
+        self.namelist.update({"tddft": None, 
+                              "xtb": None, 
+                              "casscf": None, 
+                              "cpcm": None,
+                              "casscf": None})
 
         # Parse common sections
         self.parse(infile)

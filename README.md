@@ -44,7 +44,7 @@ python3 setup.py install
 
 # Usage
 The tools consist of two scripts with different functionalities:
-1. The input generator (main_qminputs.py, -h option to visualize the arguments it takes), which is compatible with the Gaussian, NWChem and (Open)Molcas quantum mechanics (QM) programs, takes an MD trajectory in amber format and generates an input file for all the snapshots selected by the user. The program takes two input files as arguments: 
+1. The input generator (main_qminputs.py, -h option to visualize the arguments it takes), which is compatible with the Gaussian, NWChem, Orca and (Open)Molcas quantum mechanics (QM) programs, takes an MD trajectory in amber format and generates an input file for all the snapshots selected by the user. The program takes two input files as arguments: 
 
 - A main input file (-i option) on which the user defines the names of the trajectory file, the topology file, the desired QM program, the QM region to consider among others.
 

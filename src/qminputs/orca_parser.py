@@ -130,7 +130,7 @@ class Orcatpl(QMtemplate):
                     g.write("{:d}\n\n".format(len(charges)))
                     for cnt, icrd in enumerate(self.traj[self.chgmask].xyz[igeom]):
                         ichg = charges[cnt]
-                        g.write(fmt.format(*icrd, ichg) + "\n")
+                        g.write(fmt.format(ichg, *icrd) + "\n")
                 f.write("\n")
         else:
             pass

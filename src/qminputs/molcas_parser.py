@@ -63,7 +63,7 @@ class Molcastpl(QMtemplate):
         if(self.namelist["guess"] != None):
             guess_dict = {key: guess_tpl[key] for key in guess_tpl.keys() \
                     if key in self.guess}
-
+        
         with open(outfile, "w") as f:
             igeom = int(igeom)
             self._write_header(f, igeom, prename)
@@ -106,6 +106,20 @@ class Molcastpl(QMtemplate):
 
     def _write_header(self, f, igeom, prename = None):
         """Write gateway commands"""
+
+        # Copy point charges, if required
+        """Add point charges file name in header section"""
+        """Define chgfile if point charges are to be copied"""
+        if(self.namelist["externchg"] != None):
+            if(self.bsse != None and prename != None):
+                chgfile = "charges_{:s}_geom{:d}.xyz".format(prename, igeom)
+            else:
+                chgfile = "charges_geom{:d}.xyz".format(igeom)
+            self._copy_to_workdir(f, chgfile, chgfile)
+        else:
+            chgfile = None
+
+
         f.write("&GATEWAY &END\n")
         for iopt in self.namelist["header"]:
             f.write(iopt + "\n")
@@ -127,13 +141,18 @@ class Molcastpl(QMtemplate):
             f.write(namefile)
 #            self.header.append(namefile)
         
-        """Add point charges file name in header section"""
-        if(self.namelist["externchg"] != None):
-            if(self.bsse != None and prename != None):
-                chgfile = "charges_{:s}_geom{:d}.xyz".format(prename, igeom)
-            else:
-                chgfile = "charges_geom{:d}.xyz".format(igeom)
+        """Add point charges file name in header section, if required"""
+        if(chgfile != None):
             f.write("Xfield = {:s}\n".format(chgfile))
+#        if(self.namelist["externchg"] != None):
+#            if(self.bsse != None and prename != None):
+#                chgfile = "charges_{:s}_geom{:d}.xyz".format(prename, igeom)
+#            else:
+#                chgfile = "charges_geom{:d}.xyz".format(igeom)
+#            f.write("Xfield = {:s}\n".format(chgfile))
+#            # 24/03/2022: Copy point charges file from CurrDir to WorkDir
+#            self._copy_to_workdir(f, chgfile, chgfile)
+
 
         
     

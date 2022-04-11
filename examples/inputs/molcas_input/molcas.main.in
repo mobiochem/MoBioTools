@@ -1,7 +1,7 @@
 &main
 tpl   = molcas
-top   = dG-ES2.prmtop
-traj  = md-im.nc
+top   = GUA-O2-S5.prmtop
+traj  = GUA-O2-S5.nc
 qmmask = :1,2
 geoms = 303
 solvmask = :WAT

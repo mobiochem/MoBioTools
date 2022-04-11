@@ -8,16 +8,20 @@ import os
 from constants import ATOMNUM
 from common_parser import QMtemplate, write_input_bsse 
 
-class Gautpl(QMtemplate):
+class Orcatpl(QMtemplate):
 
     def __init__(self, infile):
-        """Parse Gaussian template file"""
+        """Parse Orca template file"""
         QMtemplate.__init__(self)
 
         # Attrubutes specific to gaussian
         self._infile     = infile
-        self._template   = "gaussian"
-        self.namelist.update({"route": None, "scrf": None})
+        self._template   = "orca"
+        self.namelist.update({"tddft": None, 
+                              "xtb": None, 
+                              "casscf": None, 
+                              "cpcm": None,
+                              "casscf": None})
 
         # Parse common sections
         self.parse(infile)
@@ -41,63 +45,42 @@ class Gautpl(QMtemplate):
 
         # Define variables and defaults
         if (prename != None):
-            outfile = prename + "_geom" + str(igeom) + ".com"
+            outfile = prename + "_geom" + str(igeom) + ".inp"
         else:
-            outfile = "geom" + str(igeom) + ".com"
+            outfile = "geom" + str(igeom) + ".inp"
 
         # Write output
         with open(outfile, "w") as f:
             igeom = int(igeom)
-            self._write_header(f, igeom, outfile)
-            self._write_route(f)
-            self._write_title(f, outfile)
-            self._write_chgspin(f, charge, spin)
-            self._write_geometry(f, igeom, bqmask = bqmask)
-            self._write_point_charges(f, igeom, null_charges)
-            self._write_basis(f)
-            self._write_final_space(f)
-    
+            self._write_header(f)
+            self._write_geometry(f, igeom, charge, spin, bqmask = bqmask)
+            self._write_point_charges(f, igeom, prename, null_charges)
+
             for attr in self.namelist.keys():
                 self._write_other(f, attr)
 
-    def _write_final_space(self, f):
-        """"""
+    def _write_header(self, f):
+        """Write KEYWORD commands (introduced by !)"""
+        for iopt in self.namelist["header"]:
+            if("!" not in iopt):
+                f.write("! {}\n".format(iopt))
+            else:
+                f.write("{}\n".format(iopt))
         f.write("\n")
 
-    def _write_header(self, f, igeom, outfile = None):
-        """Write Link0 commands"""
-        for iopt in self.namelist["header"]:
-            if("chk" in iopt.lower()):
-                f.write("%chk=" + outfile.replace(".com", ".chk") + "\n")
-            else:
-                f.write(iopt + "\n")
-
-    def _write_route(self, f):
-        """Write route section"""
-        try:
-            f.write(self.namelist["route"][0] + "\n")
-        except:
-            print("No route section found")
-
-    def _write_title(self, f, title):
-        f.write("\n" + title + "\n")
-
-    def _write_chgspin(self, f, charge = 0, spin = 1):
-        """Write charge and spin headers"""
-        has_frag = self.namelist["fragments"] != None
-        if(has_frag):
-            f.write("\n" + self.chgspin[0] + "\n")
-        else:
-            f.write("\n" + str(charge) + " " + str(spin) + "\n")
-
-    def _write_geometry(self, f, igeom, bqmask = None):
-        """Write xyz coordinates. f = file opened with the append option"""
+    def _write_geometry(self, f, igeom, charge = 0, spin = 1, bqmask = None):
+        """Write xyz coordinates. They are written in conjunction with the
+        charge and the spin multiplicity. The output format is the following:
+        * xyz charge spin
+        H x_coord y_coord z_coord
+        ...
+        *
+        """
 
         fmt = "{:<7s}{:<15.6f}{:<15.6f}{:<15.6f}"
-        # Iterator containing all atoms in the topology file
-#        itatoms = self.top.atoms
         itatoms = self.traj[self.qmmask].top.atoms
-
+        # Write section header
+        f.write("* xyz {} {}\n".format(charge, spin))
         if(bqmask != None):
             bqcrd = []
             # Get bqmask atom coordinates
@@ -106,7 +89,7 @@ class Gautpl(QMtemplate):
 
             for cnt, icrd in enumerate(self.traj[self.qmmask].xyz[igeom]):
                 if(list(icrd) in bqcrd):
-                    iatom = ATOMNUM[next(itatoms).atomic_number].upper() + "-Bq"
+                    iatom = ATOMNUM[next(itatoms).atomic_number].upper() + " : "
                     f.write(fmt.format(iatom, *icrd) + "\n")
                 else:
                     iatom = ATOMNUM[next(itatoms).atomic_number].upper()
@@ -115,20 +98,17 @@ class Gautpl(QMtemplate):
             for cnt, icrd in enumerate(self.traj[self.qmmask].xyz[igeom]):
                 iatom = ATOMNUM[next(itatoms).atomic_number].upper()
                 f.write(fmt.format(iatom, *icrd) + "\n")
-        f.write("\n")
+        # Write section closure
+        f.write("*\n\n")
 
-
-    def _write_point_charges(self, f, igeom, null_charges = False):
+    def _write_point_charges(self, f, igeom, prename = None, null_charges = False):
         """Write external point charges. 
         null_charges = whether to set to zero the point charges 
         (e.g: in the case of a ligand+environment system)"""
-#        try:
-#            print_chg = (self.namelist["externchg"][0] == "true")
-#        except:
-#            print("No point charges evidenced. Do not generate point charges")
-#            print_chg = False
+        
         print_chg = self.namelist["externchg"] != None
         print("print_chg = ", print_chg)
+
         if(print_chg):
             has_chg = len(self.traj[self.chgmask])>0
             if(has_chg):
@@ -137,33 +117,38 @@ class Gautpl(QMtemplate):
                 else:
                     charges = self.traj[self.chgmask].top.charge
                 fmt = "{:<15.6f}{:<15.6f}{:<15.6f}{:<15.6f}"
-                # Write point charges
-                for cnt, icrd in enumerate(self.traj[self.chgmask].xyz[igeom]):
-                    ichg = charges[cnt]
-                    f.write(fmt.format(*icrd, ichg) + "\n")
-            f.write("\n")
+                
+                # Write %pointcharges option on input file (for point charges)
+                if(prename != None):
+                    chgfile = "charges_{:s}_geom{:d}.xyz".format(prename,igeom)
+                else:
+                    chgfile = "charges_geom{:d}.xyz".format(igeom)
+                f.write('%pointcharges "{}"\n'.format(chgfile))
+                
+                # Write charges file
+                with open(chgfile, "w") as g:
+                    g.write("{:d}\n\n".format(len(charges)))
+                    for cnt, icrd in enumerate(self.traj[self.chgmask].xyz[igeom]):
+                        ichg = charges[cnt]
+                        g.write(fmt.format(ichg, *icrd) + "\n")
+                f.write("\n")
         else:
             pass
 
-        
     def _write_other(self, f, attribute):
-        """Write other nwchem sections"""
-#        exclude  = ["header", "chgspin", "route", "externchg", "bsse"]
-        exclude  = ["header", "chgspin", "route", "externchg", "bsse", "basis"]
+        """Write other orca sections introduced by % and 
+        closed by %end
+        """
+        exclude  = ["header", "chgspin", "tasks", "externchg", "bsse"]
         keys     = np.setdiff1d(list(self.namelist.keys()), exclude)
-#        print("other keys = ", keys)
+        print("other keys = ", keys)
         has_attr = (attribute in keys and self.namelist[attribute] != None)
 
         if(has_attr):
-#            f.write("\n")
+            f.write("%{}\n".format(attribute))
             for iopt in self.namelist[attribute]:
                 f.write(iopt + "\n")
-            f.write("\n")
-    
-    def _write_basis(self, f):
-        """Write basis at the bottom if the /gen keyword is evidenced on the route"""
-        if("/gen" in self.route[0].lower()):
-            for iopt in self.namelist["basis"]:
-                f.write(iopt + "\n")
-            f.write("\n")
+            f.write("end\n")
+
+
 

@@ -74,7 +74,7 @@ class NWChemtpl(QMtemplate):
                 f.write("title geom" + str(igeom) + ".in\n")
             else:
                 f.write(iopt + "\n")
-        f.write("end\n")
+#        f.write("end\n")
 
     def _write_geometry(self, f, igeom, symmetry = None, center = None, bqmask = None):
         """Write xyz coordinates. f = file opened with the append option"""

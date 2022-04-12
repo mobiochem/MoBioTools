@@ -9,6 +9,7 @@ export PYOVLP=$MBTHOME/src/pyoverlaps
 export PATH=$MBTHOME:$PATH
 export PATH=$MBTANALYSIS:$PATH
 export PATH=$PYOVLP:$PATH
+export PYTHONPATH=$PYOVLP:$PATH
 export LD_LIBRARY_PATH=$PYOVLP:$LD_LIBRARY_PATH
 
 
@@ -23,5 +24,4 @@ export MOLCAS_MAXMEM=$MOLCAS_MEM
 export runmolcas=$MOLCAS_SCRIPT
 
 
-# Install python modules
-python3 setup.py install
+

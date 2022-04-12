@@ -26,7 +26,7 @@ If you have an Amber or an AmberTools installation, they should already be prese
 # Installation
 Get the MoBioTools source
 ```
-git clone git@github.com:mobiochem/MoBioTools.git
+git clone https://github.com/mobiochem/MoBioTools.git
 ```
 then, go to the MoBioTools directory
 ```

@@ -36,7 +36,7 @@ set manually the environment variables in the config.sh script, then source it
 ```
 source ./config.sh
 ```
-and finally, carry out the installation itself
+Optional: carry out the installation itself
 ```
 python3 setup.py install
 ```

@@ -37,7 +37,9 @@ def get_num_sp(bas):
 
 def gto_sph_norm(n, a):
     """Prefactor to pseudo-normalize cartesian gtos.
-       Missing prefactor (4*pi/(2*n + 1))**0.5
+       Missing prefactor (4*pi/(2*n + 1))**0.5.
+       The actual multiplication occurs when we transform
+       Sxyz into Ssph
     """
     norm = (2**(2*n + 3) * factorial(n+1) * (2*a)**(n + 1.5)\
             /(factorial(2*n + 2) * pi**0.5) )**0.5
@@ -62,7 +64,9 @@ def get_cart2sph(mol):
             # Ierate over cols
             for cn3 in range(ict):
                 offset = offcrt[ishl[1]]
-                C[i_row + cn2][j_col + cn3] = c2s[offset + cn3 + cn2*ict]
+                c2s_idx = offset + cn3 + cn2*ict
+#                print("c2s_idx = ", c2s_idx)
+                C[i_row + cn2][j_col + cn3] = c2s[c2s_idx]
 #                print("C[" + str(i_row + cn2) + "][" + str(j_col + cn3) + "] = ", c2s[offset + cn3 + cn2*ict] )
         j_col += ict
         i_row += isp
@@ -318,17 +322,45 @@ if(__name__=="__main__"):
     from argparse import ArgumentParser
     from ovlp_wrapper import calc_cart_ovlp_matrix
     from time import process_time
-    parser = ArgumentParser(description = "Parse molden file")
+    from permutations import perm_d_indices, perm_mixed_matrix
+    parser = ArgumentParser(description = "Parse molden files. Compute\
+            overlap matrix between two sets of molecular orbitals")
     
-    parser.add_argument("-f", dest = "file", type = str, \
-            help = "Input file")
+    parser.add_argument("-f", nargs="+", type = str, \
+            help = "Input files")
     opt = parser.parse_args()
-    infile = opt.file
+
+    infiles = opt.f
 
     # Parse molden input file
-    mol = Mol(infile)
-    mol.parse()
+    mol1 = Mol(infiles[0])
+    mol1.parse()
+    if(len(infiles)>1):
+        mol2 = Mol(infiles[1])
+    else:
+        mol2 = Mol(infiles[0])
+    mol2.parse()
     time1 = process_time()
-    S   = calc_cart_ovlp_matrix(mol._bas, mol._atm, mol._env, mol.ncrt) 
+    #Sxyz
+    S    = calc_cart_ovlp_matrix(mol1._bas, mol1._atm, mol1._env, mol1.ncrt,\
+                                mol2._bas, mol2._atm, mol2._env, mol2.ncrt) 
+    #Ssph
+    Ssph = calc_sph_ovlp_matrix(S, mol1, mol2)
     time2 = process_time()
     print("Execution time for cpp_ovlp: ", str(time2 - time1) + " s")
+
+    # Compute MO overlap matrix, if MOs are present
+    try:
+        mol1.get_mos()
+        mol2.get_mos()
+        has_mo = True
+    except:
+        has_mo = False
+        pass
+    if(has_mo):
+        # Permute Ssph so that the ordering of the MOs coincides
+        # with that of the molden format
+        ind1 = perm_d_indices(mol1)
+        ind2 = perm_d_indices(mol2)
+        Smat = perm_mixed_matrix(Ssph, ind1, ind2)
+        Smo = np.matmul(mol1.C_mo, np.matmul(Smat, np.transpose(mol2.C_mo)))

@@ -58,12 +58,17 @@ def get_d_indices(mol):
         elif(amom == 2):
             idlist += list(range(count, count + 5))
             count +=5
+        elif(amom ==3):
+            count +=7
     return(idlist)
 
 def perm_d_indices(mol):
     """Similar to get_d_indices, but it also performs the index swapping
     so that it corresponds to the gaussian09 ordering. It returns the
-    full ipermuted index list."""
+    full ipermuted index list.
+
+    UPDATE: Extend loop to f functions, do not swap them
+    """
     count = 0
     idlist = []
     for cnt, iarr in enumerate(mol._bas):
@@ -79,6 +84,13 @@ def perm_d_indices(mol):
             idlist += list(temp[[2, 3, 1, 4, 0]])
 #            idlist += list(temp[[4, 2, 0, 1, 3]])
             count +=5
+        elif(amom==3):
+            temp = np.arange(count, count + 7)
+            idlist += list(temp[[3, 4, 2, 5, 1, 6, 0]])
+#            idlist += list(temp[[6, 4, 2, 0, 1, 3, 5]])
+#            idlist += list(range(count, count + 7))
+            count +=7
+
     return(idlist)
 
 def perm_matrix(M, indices):

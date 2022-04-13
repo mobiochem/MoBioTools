@@ -55,7 +55,7 @@ static double binom[] = {
 
 
 // Offset on angMomCrt
-static long OFFCRT[] = {0, 1, 4, 10}; 
+static long OFFCRT[] = {0, 1, 4, 10, 20}; 
 // Angular momenta up to f functions
 // pyscf ordering: 1-x2  2-xy 3-xz  4-y2 5-yz 6-z2
 static long ANGCRT[20][3] = {

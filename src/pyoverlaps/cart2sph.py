@@ -2,7 +2,7 @@
 from math import pi
 
 #pi = 3.141592653589793;
-offcrt = [0, 1, 10, 50]
+offcrt = [0, 1, 10, 40]
 trans_cart2sph = \
         [
         #S

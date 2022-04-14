@@ -364,6 +364,8 @@ if __name__ == "__main__":
     units      = options.units
     basis      = "spherical"
     links      = [trajfile, topfile, tpl, reference]
+    if(guess != None):
+        links.append(guess)
 
 
     active_sp = list(range(inf, sup))

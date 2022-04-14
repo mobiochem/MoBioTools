@@ -127,7 +127,7 @@ class Molcas(object):
             del self.cas_nsp.gateway_nsp["xfield"]
 #            raise ValueError("xfield not defined in gateway namespace")
 
-    def write_molcas_input(self, alter = ""):
+    def write_molcas_input(self, alter = "", guessorb = None):
         """Alter is a list of pairs containing the MOs to be swapped"""
         molfile = self.geom.replace(".xyz", "") + "-it" +  str(self.Niter) + ".inp"
         with open(molfile, "w") as f:
@@ -142,13 +142,19 @@ class Molcas(object):
                     f.write(key + " = " + val + "\n")
                 f.write("RICD" + "\n")
                 f.write("&SEWARD &END" + "\n")
-                f.write("&SCF &END" + "\n")
-                f.write(">>COPY $WorkDir/$Project.scf.molden" + " $CurrDir/."+ "\n")
+                if(guessorb != None):
+                    f.write(">>COPY $CurrDir/" + guessorb + " $WorkDir/INPORB"+ "\n")
+                else:
+                    f.write("&SCF &END" + "\n")
+                    f.write(">>COPY $WorkDir/$Project.scf.molden" + " $CurrDir/."+ "\n")
                 f.write("&RASSCF &END" + "\n")
+                if(guessorb != None):
+                    f.write("LumOrb\n")
                 for key in self.cas_nsp.rasscf_nsp:
                     val = self.cas_nsp.rasscf_nsp[key]
                     f.write(key + " = " + val + "\n")
                 f.write(">>COPY $WorkDir/$Project.rasscf.molden" + " $CurrDir/."+ "\n")
+                f.write(">>COPY $WorkDir/$Project.RasOrb" + " $CurrDir/."+ "\n")
                 self.Niter +=1
             else:
                 f.write("&GATEWAY" + "\n")
@@ -170,6 +176,7 @@ class Molcas(object):
                 f.write("LumOrb" + "\n")
 
                 f.write(">>COPY $WorkDir/$Project.rasscf.molden" + " $CurrDir/."+ "\n")
+                f.write(">>COPY $WorkDir/$Project.RasOrb" + " $CurrDir/."+ "\n")
                 self.Niter +=1
 
 class Parse_crd(object):
@@ -306,7 +313,7 @@ if __name__ == "__main__":
     # Input arguments
     parser = ArgumentParser("PyOverlaps MO recovery pof the active space")
     parser.set_defaults(units = "bohr", calculate = "yes",\
-            restart = 1, tpl = "tpl.inp", ngeom = 1, igeom = 0, align = True)
+            restart = 1, tpl = "tpl.inp", ngeom = 1, igeom = 0, align = True, guess=None)
     parser.add_argument("-p ", dest = "top", type = str,\
             help = "Topology file")
     parser.add_argument("-a ", dest = "align", type = bool,\
@@ -333,6 +340,8 @@ if __name__ == "__main__":
 #            help = "Basis type, either cartesian or spherical")
     parser.add_argument("-qm", dest = "qmmask", type = str,
             help = "QM mask")
+    parser.add_argument("-g", dest = "guess", type = str,
+            help = "Initial guess of molecular orbitals (usually same as reference)")
     parser.add_argument("--ig", dest = "igeom", type = int, help = "Specific\
                  frame for which to generate an input file. Default = 0")
     parser.add_argument("--n", dest = "ngeom", type = int, help = "Number of\n\
@@ -350,6 +359,7 @@ if __name__ == "__main__":
     igeom      = options.igeom
     ngeom      = options.ngeom
     align      = options.align
+    guess      = options.guess
     
     units      = options.units
     basis      = "spherical"
@@ -377,7 +387,7 @@ if __name__ == "__main__":
     # Start parsing
     cas_obj = Parse_cas(tpl)
     molcas_obj = Molcas(cas_obj, igeom)
-    molcas_obj.write_molcas_input()
+    molcas_obj.write_molcas_input(guessorb = guess)
     converged = False
 
     # Parse coordinates:
@@ -800,6 +810,6 @@ if __name__ == "__main__":
                     f.write(form.format(igeom, alt, ref, it, warning) + "\n")
                     print(form.format(igeom, alt, ref, it, warning))
         else:
-            molcas_obj.write_molcas_input(alter)
+            molcas_obj.write_molcas_input(alter = alter)
     
     os.chdir(workdir)

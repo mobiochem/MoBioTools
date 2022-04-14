@@ -368,7 +368,7 @@ if __name__ == "__main__":
         links.append(guess)
 
 
-    active_sp = list(range(inf, sup))
+    active_sp = list(range(inf - 1, sup)) # Indexing starts from zero
     maxit = 5 # Max number of CASSCF iterations
     workdir = os.getcwd() + "/"
 

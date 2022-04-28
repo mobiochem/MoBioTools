@@ -121,8 +121,6 @@ class Molcastpl(QMtemplate):
 
 
         f.write("&GATEWAY &END\n")
-        for iopt in self.namelist["header"]:
-            f.write(iopt + "\n")
         
         """Add name of xyz file in gateway (Two if bsse)"""
         if(self.bsse != None and prename != None and prename != "complex"):
@@ -153,6 +151,8 @@ class Molcastpl(QMtemplate):
 #            # 24/03/2022: Copy point charges file from CurrDir to WorkDir
 #            self._copy_to_workdir(f, chgfile, chgfile)
 
+        for iopt in self.namelist["header"]:
+            f.write(iopt + "\n")
 
         
     

@@ -193,8 +193,8 @@ class Molcastpl(QMtemplate):
             if(calctype.lower() == "scf" or calctype.lower() == "rasscf") :
                 self._copy_to_currdir(f, molden ,molden)
                 self._copy_to_currdir(f, mos ,mos)
-            elif(calctype.lower() == "caspt2"):
-                self._copy_to_currdir(f, wfn, wfn)
+#            elif(calctype.lower() == "caspt2"):
+#                self._copy_to_currdir(f, wfn, wfn)
             elif(calctype.lower() == "rassi"):
                 self._copy_to_currdir(f, wfnmix, wfnmix)
 

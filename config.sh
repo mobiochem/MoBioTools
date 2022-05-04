@@ -6,9 +6,11 @@
 export MBTHOME=""
 export MBTANALYSIS=$MBTHOME/scripts
 export PYOVLP=$MBTHOME/src/pyoverlaps
+export QMINP=$MBTHOME/src/qminputs
 export PATH=$MBTHOME:$PATH
 export PATH=$MBTANALYSIS:$PATH
 export PATH=$PYOVLP:$PATH
+export PATH=$QMINP:$PATH
 export PYTHONPATH=$PYOVLP:$PATH
 export LD_LIBRARY_PATH=$PYOVLP:$LD_LIBRARY_PATH
 

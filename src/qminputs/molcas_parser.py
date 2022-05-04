@@ -195,6 +195,8 @@ class Molcastpl(QMtemplate):
                 self._copy_to_currdir(f, mos ,mos)
 #            elif(calctype.lower() == "caspt2"):
 #                self._copy_to_currdir(f, wfn, wfn)
+            elif(calctype.lower() == "caspt2"):
+                self._copy_to_currdir(f, wfnmix, wfnmix)
             elif(calctype.lower() == "rassi"):
                 self._copy_to_currdir(f, wfnmix, wfnmix)
 

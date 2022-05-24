@@ -302,7 +302,7 @@ if __name__ == "__main__":
     from ovlp_wrapper import symmetrize, wrap_ovlp_matrix, wrap_ovlp_matrix_mix,\
             calc_cart_ovlp_matrix
     from parse_molden import Mol, calc_sph_ovlp_matrix, \
-            get_cart2sph, gto_sph_norm, get_num_sp 
+            get_cart2sph, gto_sph_norm, get_num_sp, ag2bohr
     from cart2sph import trans_cart2sph as c2s
     from cart2sph import offcrt
     from align import Align
@@ -400,6 +400,8 @@ if __name__ == "__main__":
     ref_coord =  mol1.atomcoords
     atom_list = mol1._atm[:,0]
     # This performs automatically the alignment
+    if(units == "bohr"):
+        ref_coord = (1/ag2bohr) * ref_coord
     crd_obj   = Parse_crd(ref_coord,
                           atom_list,
                           trajfile,

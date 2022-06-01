@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Define variables
-
+# Create results file
 if [ -f results.dat ]
 then
     rm results.dat

@@ -368,8 +368,9 @@ if __name__ == "__main__":
         links.append(guess)
 
     inf       = inf - 1 # Internal indexing
-    sup       = sup - 1
-    active_sp = list(range(inf, sup+1)) # Indexing starts from zero
+#    sup       = sup - 1
+#    active_sp = list(range(inf, sup+1)) # Indexing starts from zero
+    active_sp = list(range(inf, sup)) # Indexing starts from zero
     maxit = 5 # Max number of CASSCF iterations
     workdir = os.getcwd() + "/"
 

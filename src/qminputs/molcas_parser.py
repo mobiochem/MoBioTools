@@ -7,6 +7,7 @@ from argparse import ArgumentParser
 import os
 from constants import ATOMNUM
 from common_parser import QMtemplate, write_input_bsse 
+from link_atoms import Link_atoms, get_unit_vector
 
 class Molcastpl(QMtemplate):
 
@@ -26,6 +27,24 @@ class Molcastpl(QMtemplate):
 
         # Parse common sections
         self.parse(infile)
+
+    def link_handler(self, traj, qmmask, igeom = 0):
+        """Initialize Link_atom object to handle
+           eventual link atoms
+        """
+
+        self.linkobj = Link_atoms(traj, qmmask, igeom = 0)
+        self.linkobj.get_link_info()
+        self.N_link = self.linkobj.N_link
+        if(self.N_link>0):
+            print("QM/MM boundaries found: printing bond matrix\n\
+                   involving those bonds in the format \n\
+                   [[qm_id1, mm_id1],\n\
+                    [qm_id2, mm_id2], ...]")
+            print(self.linkobj.qmmm_bonds)
+            print("Employing link atom approach...")
+        else:
+            print("No QM/MM boundary found")
     
     @write_input_bsse
     def write_input(self, 
@@ -50,6 +69,9 @@ class Molcastpl(QMtemplate):
             outfile = prename + "_geom" + str(igeom) + ".in"
         else:
             outfile = "geom" + str(igeom) + ".in"
+
+        # Define link handler
+        self.link_handler(traj, qmmask, igeom)
 
         # Prepare guess files, if requested
         # No guess for SCF
@@ -98,6 +120,10 @@ class Molcastpl(QMtemplate):
                                           outfile = outfile, 
                                           jobmix  = guess_dict["jobmix"])
 #                jobmix = outfile."JobMix"
+        
+        # Write xyz for QM and MM regions (for 
+        # visualization purposes)
+        self.linkobj.write_geometry(True)
           
     def _write_seward(self, f):
         """Write seward command"""
@@ -215,7 +241,7 @@ class Molcastpl(QMtemplate):
         files, each one containing one of the monomers. In this case the 
         function prints out the atoms NOT present in bqmask."""
 
-        fmt = "{:<7s}{:<15.6f}{:<15.6f}{:<15.6f}"
+        fmt = "{:<7s}{:<15.6f}{:<15.6f}{:<15.6f}\n"
         # Iterator containing all atoms in the topology file
 #        itatoms = self.top.atoms
         itatoms = self.traj[self.qmmask].top.atoms
@@ -230,30 +256,60 @@ class Molcastpl(QMtemplate):
 
                 # Print number of atoms that are not in bqmask
                 mask = "(" + self.qmmask + ") & (!" + bqmask + ")"
-                len_atoms = len(list(self.traj[mask].top.atoms))
-                f.write("{:d}\n\n".format(len_atoms))
-#                f.write("{:d}\n\n".format(len(bqcrd)))
+                QM_atoms = len(list(self.traj[mask].top.atoms))
+                # Count also link atoms NOT in the Bq region
+                for cnt, icrd in enumerate(self.linkobj.link_pos):
+                    qm_id  = self.linkobj.qmmm_bonds[cnt][0]
+                    crd_qm = self.traj.xyz[igeom][qm_id] 
+                    # Assess whether the QM partner is in the Bq region
+                    if(list(crd_qm) not in bqcrd):
+                        QM_atoms += 1
+                    else:
+                        pass
+
+                # Now print xyz for atoms NOT in the Bq region
+                f.write("{:d}\n\n".format(QM_atoms))
 
                 for cnt, icrd in enumerate(self.traj[self.qmmask].xyz[igeom]):
                     if(list(icrd) in bqcrd):
+                        # Iterate, but do NOT print
                         iatom = ATOMNUM[next(itatoms).atomic_number].upper()
-#                        f.write(fmt.format(iatom, *icrd) + "\n")
                     else:
                     # Print atoms not in bqmask only
-#                        next(itatoms)
                         iatom = ATOMNUM[next(itatoms).atomic_number].upper()
-#                        print(iatom)
-                        f.write(fmt.format(iatom, *icrd) + "\n")
+                        f.write(fmt.format(iatom, *icrd))
+                # Now print eventual Link atoms, accounting for
+                # those NOT present in the Bq region
+                for cnt, icrd in enumerate(self.linkobj.link_pos):
+                    qm_id  = self.linkobj.qmmm_bonds[cnt][0]
+                    crd_qm = self.traj.xyz[igeom][qm_id] 
+                    # Assess whether the QM partner is in the Bq region
+                    if(list(crd_qm) not in bqcrd):
+                        link_at = self.linkobj.link_atom
+                        f.write(fmt.format(link_at, *icrd))
+#                        link_at = self.linkobj.link_atom + "-Bq"
+                    else:
+                        pass
+
                 f.write("\n")
+        # No Bq atoms present
         else:
             outfile = "geom{:d}.xyz".format(igeom)
             with open(outfile, "w") as f:
                 qmatoms = self.traj[self.qmmask].xyz[igeom]
-                f.write("{:d}\n\n".format(len(qmatoms)))
-#                for cnt, icrd in enumerate(self.traj[self.qmmask].xyz[igeom]):
+                # Count QM atoms including link atoms
+                QM_atoms = self.linkobj.N_qm + self.linkobj.N_link
+
+                f.write("{:d}\n\n".format(QM_atoms))
                 for cnt, icrd in enumerate(qmatoms):
                     iatom = ATOMNUM[next(itatoms).atomic_number].upper()
-                    f.write(fmt.format(iatom, *icrd) + "\n")
+                    f.write(fmt.format(iatom, *icrd))
+                # Now print eventual Link atoms
+                for cnt, icrd in enumerate(self.linkobj.link_pos):
+                    qm_id   = self.linkobj.qmmm_bonds[cnt][0]
+                    crd_qm  = self.traj.xyz[igeom][qm_id] 
+                    link_at = self.linkobj.link_atom
+                    f.write(fmt.format(link_at, *icrd))
                 f.write("\n")
 
     def _write_point_charges(self, f, igeom, prename = None, null_charges = None):
@@ -274,9 +330,9 @@ class Molcastpl(QMtemplate):
             has_chg = len(self.traj[self.chgmask])>0
             if(has_chg):
                 if(null_charges):
-                    charges = np.zeros(len(self.traj[self.chgmask].top.charge))
+                    charges = np.zeros(len(self.traj.top.charge))
                 else:
-                    charges = self.traj[self.chgmask].top.charge
+                    charges = self.traj.top.charge
                 fmt = "{:<15.6f}{:<15.6f}{:<15.6f}{:<15.6f}{:<10.1f}{:<10.1f}{:<10.1f}\n"
                 if(prename != None):
                     chgfile = "charges_{:s}_geom{:d}.xyz".format(prename,igeom)
@@ -285,11 +341,33 @@ class Molcastpl(QMtemplate):
 
                 # Write charges file
                 with open(chgfile, "w") as g:
-                    g.write("{:d}\n".format(len(charges)))
-                    for cnt, icrd in enumerate(self.traj[self.chgmask].xyz[igeom]):
-#                        ichg = self.top[self.chgmask].charge[cnt]
-                        ichg = charges[cnt]
-                        g.write(fmt.format(*icrd, ichg, 0.0, 0.0, 0.0))
+                    # Count MM atoms accounting for eventual link atoms
+                    MM_atoms = self.linkobj.N_mm - self.linkobj.N_link
+                    g.write("{:d}\n".format(MM_atoms))
+#                    for cnt, icrd in enumerate(self.traj[self.chgmask].xyz[igeom]):
+##                        ichg = self.top[self.chgmask].charge[cnt]
+#                        ichg = charges[cnt]
+#                        g.write(fmt.format(*icrd, ichg, 0.0, 0.0, 0.0))
+                    for nat, iat in enumerate(self.traj.top.atoms):
+                        if(self.linkobj.labels[nat] == 1):
+                            # Consider only MM atoms
+                            if(nat not in self.linkobj.all_link):
+                                # MM atoms not involved in QM/MM boundary
+                                crd = self.traj.xyz[igeom][nat]
+                                chg = charges[nat]
+                                g.write(fmt.format(*crd, chg, 0.0, 0.0, 0.0))
+                            elif(nat in self.linkobj.qmmm_bonds[:,1]):
+                                # Print NNs for each QM/MM atom with smeared charges
+                                chg_parz = charges[nat]/\
+                                           len(self.linkobj.nn_atoms[nat])
+                                
+                                for inn in self.linkobj.nn_atoms[nat]:
+                                    # Ith nearest neighbor
+                                    crd = self.traj.xyz[igeom][inn]
+                                    chg = charges[inn] + chg_parz
+                                    g.write(fmt.format(*crd, chg, 0.0, 0.0, 0.0))
+                            else:
+                                pass
         else:
             pass
 

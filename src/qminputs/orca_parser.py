@@ -7,6 +7,7 @@ from argparse import ArgumentParser
 import os
 from constants import ATOMNUM
 from common_parser import QMtemplate, write_input_bsse 
+from link_atoms import Link_atoms, get_unit_vector
 
 class Orcatpl(QMtemplate):
 
@@ -25,6 +26,24 @@ class Orcatpl(QMtemplate):
 
         # Parse common sections
         self.parse(infile)
+
+    def link_handler(self, traj, qmmask, igeom = 0):
+        """Initialize Link_atom object to handle
+           eventual link atoms
+        """
+
+        self.linkobj = Link_atoms(traj, qmmask, igeom = 0)
+        self.linkobj.get_link_info()
+        self.N_link = self.linkobj.N_link
+        if(self.N_link>0):
+            print("QM/MM boundaries found: printing bond matrix\n\
+                   involving those bonds in the format \n\
+                   [[qm_id1, mm_id1],\n\
+                    [qm_id2, mm_id2], ...]")
+            print(self.linkobj.qmmm_bonds)
+            print("Employing link atom approach...")
+        else:
+            print("No QM/MM boundary found")
 
     @write_input_bsse
     def write_input(self, 
@@ -77,7 +96,7 @@ class Orcatpl(QMtemplate):
         *
         """
 
-        fmt = "{:<7s}{:<15.6f}{:<15.6f}{:<15.6f}"
+        fmt = "{:<7s}{:<15.6f}{:<15.6f}{:<15.6f}\n"
         itatoms = self.traj[self.qmmask].top.atoms
         # Write section header
         f.write("* xyz {} {}\n".format(charge, spin))
@@ -90,14 +109,33 @@ class Orcatpl(QMtemplate):
             for cnt, icrd in enumerate(self.traj[self.qmmask].xyz[igeom]):
                 if(list(icrd) in bqcrd):
                     iatom = ATOMNUM[next(itatoms).atomic_number].upper() + " : "
-                    f.write(fmt.format(iatom, *icrd) + "\n")
+                    f.write(fmt.format(iatom, *icrd))
                 else:
                     iatom = ATOMNUM[next(itatoms).atomic_number].upper()
-                    f.write(fmt.format(iatom, *icrd) + "\n")
+                    f.write(fmt.format(iatom, *icrd))
+            # Now print eventual Link atoms, accounting for
+            # those present in the Bq region
+            for cnt, icrd in enumerate(self.linkobj.link_pos):
+                qm_id  = self.linkobj.qmmm_bonds[cnt][0]
+                crd_qm = self.traj.xyz[igeom][qm_id] 
+                # Assess whether the QM partner is in the Bq region
+                if(list(crd_qm) in bqcrd):
+                    link_at = self.linkobj.link_atom + ":"
+                else:
+                    link_at = self.linkobj.link_atom
+                f.write(fmt.format(link_at, *icrd))
+
+        # No Bq atoms present
         else:
             for cnt, icrd in enumerate(self.traj[self.qmmask].xyz[igeom]):
                 iatom = ATOMNUM[next(itatoms).atomic_number].upper()
-                f.write(fmt.format(iatom, *icrd) + "\n")
+                f.write(fmt.format(iatom, *icrd))
+            # Now print eventual Link atoms
+            for cnt, icrd in enumerate(self.linkobj.link_pos):
+                qm_id   = self.linkobj.qmmm_bonds[cnt][0]
+                crd_qm  = self.traj.xyz[igeom][qm_id] 
+                link_at = self.linkobj.link_atom
+                f.write(fmt.format(link_at, *icrd))
         # Write section closure
         f.write("*\n\n")
 
@@ -113,10 +151,10 @@ class Orcatpl(QMtemplate):
             has_chg = len(self.traj[self.chgmask])>0
             if(has_chg):
                 if(null_charges):
-                    charges = np.zeros(len(self.traj[self.chgmask].top.charge))
+                    charges = np.zeros(len(self.traj.top.charge))
                 else:
-                    charges = self.traj[self.chgmask].top.charge
-                fmt = "{:<15.6f}{:<15.6f}{:<15.6f}{:<15.6f}"
+                    charges = self.traj.top.charge
+                fmt = "{:<15.6f}{:<15.6f}{:<15.6f}{:<15.6f}\n"
                 
                 # Write %pointcharges option on input file (for point charges)
                 if(prename != None):
@@ -127,10 +165,33 @@ class Orcatpl(QMtemplate):
                 
                 # Write charges file
                 with open(chgfile, "w") as g:
-                    g.write("{:d}\n\n".format(len(charges)))
-                    for cnt, icrd in enumerate(self.traj[self.chgmask].xyz[igeom]):
-                        ichg = charges[cnt]
-                        g.write(fmt.format(ichg, *icrd) + "\n")
+                    MM_charges = self.linkobj.N_mm - self.linkobj.N_link
+
+                    g.write("{:d}\n\n".format(MM_charges))
+#                    g.write("{:d}\n\n".format(len(charges)))
+#                    for cnt, icrd in enumerate(self.traj[self.chgmask].xyz[igeom]):
+#                        ichg = charges[cnt]
+#                        g.write(fmt.format(ichg, *icrd) + "\n")
+                    for nat, iat in enumerate(self.traj.top.atoms):
+                        if(self.linkobj.labels[nat] == 1):
+                            # Consider only MM atoms
+                            if(nat not in self.linkobj.all_link):
+                                # MM atoms not involved in QM/MM boundary
+                                crd = self.traj.xyz[igeom][nat]
+                                chg = charges[nat]
+                                g.write(fmt.format(chg, *crd))
+                            elif(nat in self.linkobj.qmmm_bonds[:,1]):
+                                # Print NNs for each QM/MM atom with smeared charges
+                                chg_parz = charges[nat]/\
+                                           len(self.linkobj.nn_atoms[nat])
+                                
+                                for inn in self.linkobj.nn_atoms[nat]:
+                                    # Ith nearest neighbor
+                                    crd = self.traj.xyz[igeom][inn]
+                                    chg = charges[inn] + chg_parz
+                                    g.write(fmt.format(chg, *crd))
+                            else:
+                                pass
                 f.write("\n")
         else:
             pass

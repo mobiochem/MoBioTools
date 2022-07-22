@@ -251,7 +251,6 @@ def gen_submission():
         txt = """#!/bin/sh
 export JOBID=$$
 export Project=$1
-export MOLCAS_NPROCS=$2
 if [ -z $WorkDir ]; then
  export WorkDir=$MOLCAS_SCRATCH/$USER/$Project-${JOBID}
  mkdir -p $WorkDir
@@ -277,7 +276,7 @@ then
 fi
 
 # Run openmolcas
-$runmolcas -np $MOLCAS_NPROCS $Project > $Project.out 
+$runmolcas $Project > $Project.out
 if [ -e $WorkDir/$Project.JobIph ]; then
  bzip2 < $WorkDir/$Project.JobIph > $CurrDir/$Project.JobIph.bz2
 fi
@@ -285,10 +284,6 @@ fi
 # Retrieve output data
 cd $CurrDir
 rm -rf $WorkDir
-#if [ $1 != "nodelete" ]; then
-# rm -rf $WorkDir
-# fi
-#else
 """
         f.write(txt)
         comm = "chmod a+rwx " + os.getcwd() + "/tmp_env_vars.sh"

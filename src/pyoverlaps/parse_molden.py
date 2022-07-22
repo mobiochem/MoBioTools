@@ -265,6 +265,26 @@ class Mol(object):
         else:
             self.C_mo = np.zeros((dim,dim))
     
+    def get_mo_prop(self):
+        """Get MO properties such as Energies,
+           spin and occupation numbers
+        """
+        self.moenergies = []
+        self.mooccnos   = [] # MO occupation numbers
+        self.mospin     = []
+        for cnt, iline in enumerate(self.lines):
+            row = iline.split()
+            if("Ene=" in iline):
+                self.moenergies.append(float(row[1]))
+            elif("Spin=" in iline):
+                self.mospin.append(row[1])
+            elif("Occup=" in iline):
+                self.mooccnos.append(float(row[1]))
+            else:
+                pass
+        self.moenergies = np.array(self.moenergies)
+        self.mooccnos   = np.array(self.mooccnos)
+        self.mospin     = np.array(self.mospin)
     
     def get_all_mo(self, unrestr = False):
         """For now, assume that N_sph has been parsed. In case of unrestricted solutions,
@@ -308,6 +328,8 @@ class Mol(object):
         # Get MOs
         self.allocate_mo(unrestr)
         self.get_all_mo(unrestr)
+        #Get properties
+        self.get_mo_prop()
 
     def parse(self, unrestr = False):
         """General parser version"""

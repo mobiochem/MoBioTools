@@ -33,7 +33,7 @@ class Molcastpl(QMtemplate):
            eventual link atoms
         """
 
-        self.linkobj = Link_atoms(traj, qmmask, igeom = 0)
+        self.linkobj = Link_atoms(traj, qmmask, igeom)
         self.linkobj.get_link_info()
         self.N_link = self.linkobj.N_link
         if(self.N_link>0):

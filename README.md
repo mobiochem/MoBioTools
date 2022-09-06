@@ -32,15 +32,10 @@ then, go to the MoBioTools directory
 ```
 cd MoBioTools
 ```
-set manually the environment variables in the config.sh script, then source it
+set manually the environment variables in the config.sh script, then source it. Alternatively, you can also add those variables to your .bashrc or .bash_profile files.
 ```
 source ./config.sh
 ```
-Optional: carry out the installation itself
-```
-python3 setup.py install
-```
-
 
 # Usage
 The tools consist of two scripts with different functionalities:

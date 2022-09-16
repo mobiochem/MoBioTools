@@ -22,7 +22,9 @@ class Main(object):
                           "ref": None,
                           "solvmask": None,
                           "closest": None,
-                          "bsse": None}
+                          "bsse": None,
+                          "link_atom": "H",
+                          "link_dist": 1.09}
         for key in self.namelist.keys():
             self[key] = self.namelist[key]
         self._infile   = infile
@@ -125,7 +127,7 @@ def _geometry_handler(igeom, traj, mainobj, tplobj, currdir):
         pass
     os.chdir(idir)
     _closest_handler(traj[igeom:igeom+1], mainobj, tplobj)
-    tplobj.write_input(traj, traj.top, mainobj.qmmask, igeom = igeom)
+    tplobj.write_input(traj, traj.top, mainobj.qmmask, igeom = igeom, link_atom = mainobj.link_atom, link_dist = float(mainobj.link_dist))
 
 # Assess whether to analyze closest residues or not
 def _closest_handler(traj, mainobj, tplobj):

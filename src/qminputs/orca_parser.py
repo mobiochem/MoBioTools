@@ -27,12 +27,12 @@ class Orcatpl(QMtemplate):
         # Parse common sections
         self.parse(infile)
 
-    def link_handler(self, traj, qmmask, igeom = 0):
+    def link_handler(self, traj, qmmask, igeom = 0, link_atom = "H", link_dist = 1.09):
         """Initialize Link_atom object to handle
            eventual link atoms
         """
 
-        self.linkobj = Link_atoms(traj, qmmask, igeom)
+        self.linkobj = Link_atoms(traj, qmmask, igeom, link_atom, link_dist)
         self.linkobj.get_link_info()
         self.N_link = self.linkobj.N_link
         if(self.N_link>0):
@@ -55,7 +55,9 @@ class Orcatpl(QMtemplate):
                     spin = 1,
                     null_charges = False,
                     prename = None,
-                    bqmask = None):
+                    bqmask = None,
+                    link_atom = "H",
+                    link_dist = 1.09):
         """traj = pytraj trajectory, top = pytraj topology"""
         self.traj    = traj
         self.top     = top
@@ -67,6 +69,9 @@ class Orcatpl(QMtemplate):
             outfile = prename + "_geom" + str(igeom) + ".inp"
         else:
             outfile = "geom" + str(igeom) + ".inp"
+        
+        # Define link handler
+        self.link_handler(traj, qmmask, igeom, link_atom, link_dist)
 
         # Write output
         with open(outfile, "w") as f:
@@ -77,6 +82,10 @@ class Orcatpl(QMtemplate):
 
             for attr in self.namelist.keys():
                 self._write_other(f, attr)
+
+        # Write xyz for QM and MM regions (for 
+        # visualization purposes)
+        self.linkobj.write_geometry(True)
 
     def _write_header(self, f):
         """Write KEYWORD commands (introduced by !)"""

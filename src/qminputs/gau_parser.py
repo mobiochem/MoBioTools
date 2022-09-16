@@ -23,12 +23,12 @@ class Gautpl(QMtemplate):
         # Parse common sections
         self.parse(infile)
     
-    def link_handler(self, traj, qmmask, igeom = 0):
+    def link_handler(self, traj, qmmask, igeom = 0, link_atom = "H", link_dist = 1.09):
         """Initialize Link_atom object to handle
            eventual link atoms
         """
 
-        self.linkobj = Link_atoms(traj, qmmask, igeom)
+        self.linkobj = Link_atoms(traj, qmmask, igeom, link_atom, link_dist)
         self.linkobj.get_link_info()
         self.N_link = self.linkobj.N_link
         if(self.N_link>0):
@@ -51,7 +51,9 @@ class Gautpl(QMtemplate):
                     spin = 1,
                     null_charges = False,
                     prename = None,
-                    bqmask = None):
+                    bqmask = None,
+                    link_atom = "H",
+                    link_dist = 1.09):
         """traj = pytraj trajectory, top = pytraj topology"""
         self.traj    = traj
         self.top     = top
@@ -65,7 +67,7 @@ class Gautpl(QMtemplate):
             outfile = "geom" + str(igeom) + ".com"
         
         # Define link handler
-        self.link_handler(traj, qmmask, igeom)
+        self.link_handler(traj, qmmask, igeom, link_atom, link_dist)
 
         # Write output
         with open(outfile, "w") as f:

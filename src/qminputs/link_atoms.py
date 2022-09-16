@@ -14,20 +14,22 @@ def get_unit_vector(ini, fin):
     return(v)
 
 class Link_atoms(object):
-    def __init__(self, traj, qmmask, igeom = 0):
+    def __init__(self, traj, qmmask, igeom = 0, link_atom = "H", link_dist = 1.09):
         """Class to handle eventual link atoms"""
 
         # GENERAL VARIABLES
 #        self.traj       = pt.load(crd, top, frame_indices = [igeom])
-        self.traj       = traj
-        self.igeom      = igeom
-        self.qmmask     = qmmask
-        self.qmcrd      = self.traj[qmmask].xyz[igeom]
-        self.N_qm       = len(self.qmcrd)
-        self.N_mm       = len(self.traj.xyz[igeom]) - self.N_qm
-        self.N_link     = 0 # Number of link atoms
-        self.link_atom  = "H"
-        self.link_dist  = 1.09 # Angstroms
+        self.traj           = traj
+        self.igeom          = igeom
+        self.qmmask         = qmmask
+        self.qmcrd          = self.traj[qmmask].xyz[igeom]
+        self.N_qm           = len(self.qmcrd)
+        self.N_mm           = len(self.traj.xyz[igeom]) - self.N_qm
+        self.N_link         = 0 # Number of link atoms
+        self.link_atom      = link_atom
+        self.link_dist      = link_dist # Angstroms
+        self.link_atom_def  = "H"  # Default
+        self.link_dist_def  = 1.09 # Default
 
         # INDEXING-RELATED VARIABLES
 
@@ -133,8 +135,47 @@ class Link_atoms(object):
             # Get all MM atoms involved in QM/MM boundary + NNs
             self.all_link = np.concatenate((self.qmmm_bonds[:,1],\
                                             self.all_nn))
+            # Print info regarding the nature of the boundary
+            self.print_warning_boundary()
+            self.print_warning_charges()
         else:
             print("No link atoms found")
+
+    def print_warning_charges(self):
+        """Print a warning message in case the total MM 
+           charge of the MM (and QM) region is not an 
+           integer
+        """
+        total_qm = np.sum(self.traj[self.qmmask].top.charge)
+        total_mm = np.sum(self.traj["!(" + self.qmmask + ")"].top.charge)
+
+        print("\nWARNING: The total MM charges of the QM region ({:6.4f}) and of the MM region ({:6.4f}) are not integers. Please assess whether to (manually) modify the MM charges so as to obtain an integer value\n".format(total_qm, total_mm))
+
+
+    def print_warning_boundary(self):
+        """Print a warning regarding the link atom and
+           the link atom distance in case a non C-C 
+           bond is being cut
+        """
+
+        # Iterate over qmmm bonds
+        for ibond in self.qmmm_bonds:
+            at1 = self.traj.top.atom(ibond[0]).atomic_number
+            at2 = self.traj.top.atom(ibond[1]).atomic_number
+            atname1 = ATOMNUM[at1]
+            atname2 = ATOMNUM[at2]
+            if((at1 != 6) or (at2 != 6)):
+                print("\nWARNING: Cutting a 'non-standard' [C(sp3)-C(sp3)] boundary: The atoms involved are " + atname1 + "(QM) - " + atname2 + "(MM)" )
+                if((self.link_atom == self.link_atom_def) and (self.link_dist == self.link_dist_def)):
+                    print("Using the DEFAULT parameters:")
+                else:
+                    print("Using the NON-DEFAULT parameters:")
+                print("Link atom:     " + self.link_atom)
+                print("Link distance: " + str(self.link_dist))
+            else:
+                print("\nCutting a 'standard' [C(sp3)-C(sp3)] boundary. The parameters used are:" )
+                print("Link atom:     " + self.link_atom)
+                print("Link distance: " + str(self.link_dist))
 
     def _get_nn_per_atom(self, qm_at, mm_at, qm_id):
         """Get nearest neighbors (NN) of mmatom in the MM region

@@ -194,6 +194,7 @@ class Parse_crd(object):
         self.n_atoms = self.traj.top.n_atoms
         self.n_charges = self.n_atoms - self.n_qm
         self.qmmask = qmmask
+        print("SELF.QMMASK = ", self.qmmask)
 
     def rotate_crd(self, igeom):
         """Rotate ith geometry. It returns the ith 
@@ -215,36 +216,57 @@ class Parse_crd(object):
         # Get rotated matrix
         M = self.rotate_crd(igeom)
 
-        # Get index of residue in qmmask
-        for ires in self.traj.top.residues:
-            if(ires.name in self.qmmask):
-                self.ires = ires.index
-                break
+        # 24-01-2023: Consider a list of residues written
+        # as follows: :1,2,3,4,5
+
+        self.ires = [int(i) for i in self.qmmask[1:].split(',')]
+
+#        # Get index of residue in qmmask
+#        for ires in self.traj.top.residues:
+#            if(ires.name in self.qmmask):
+#                self.ires = ires.index
+#                break
         print("ires = ", self.ires)
+
+#        # Retrieve atoms in qmmask
+#        atoms_qmmask = []
+#        for iat in self.traj.top.atoms:
+#            if(iat.resid == self.ires):
+#                atoms_qmmask.append(iat)
 
         # Retrieve atoms in qmmask
         atoms_qmmask = []
         for iat in self.traj.top.atoms:
-            if(iat.resid == self.ires):
+            if(iat.resid + 1 in self.ires):
                 atoms_qmmask.append(iat)
+
+        # Write qm geometry
 
         # Write qm geometry
         with open("geom" + str(igeom) + ".xyz", "w") as f:
             f.write(str(self.n_qm) + "\n")
             f.write("\n")
             fmt1 = "{:<7s}{:<15.6f}{:<15.6f}{:<15.6f}"
-            for cnt, iat in enumerate(self.traj.top.atoms):
-                if(iat.resid == self.ires):
-                    f.write(fmt1.format(iat.name, *M[cnt][0:3]) + "\n")
+            for iat in atoms_qmmask:
+                f.write(fmt1.format(iat.name[0], *M[iat.index][0:3]) + "\n")
+#            for cnt, iat in enumerate(self.traj.top.atoms):
+##                if(iat.resid == self.ires):
+#                if(iat.resid in self.ires):
+#                    f.write(fmt1.format(iat.name[0], *M[cnt][0:3]) + "\n")
                     
         if(len(self.charges)>0):
-            with open("charges" + str(igeom) + ".dat", "w") as f:
+#            with open("charges" + str(igeom) + ".dat", "w") as f:
+            with open("charges" + str(igeom) + ".dat", "w") as f,\
+                    open("coord_charges" + str(igeom) + ".xyz", "w") as g:
                 f.write(str(self.n_charges) + "\n")
+                g.write(str(self.n_charges) + "\n\n")
                 fmt2 = "{:<15.6f}{:<15.6f}{:<15.6f}{:<15.6f}{:<10.1f}{:<10.1f}{:<10.1f}"
                 for cnt, iat in enumerate(self.traj.top.atoms):
-                    if(iat.resid != self.ires):
+#                    if(iat.resid != self.ires):
+                    if(iat.resid not in self.ires):
                         f.write(fmt2.format(M[cnt][0], M[cnt][1], M[cnt][2],\
                             self.charges[cnt], 0.0, 0.0, 0.0) + "\n")
+                        g.write(fmt1.format(iat.name[0], M[cnt][0], M[cnt][1], M[cnt][2]) + "\n")
 
 def gen_submission():
     with open("tmp_env_vars.sh", "w") as f:

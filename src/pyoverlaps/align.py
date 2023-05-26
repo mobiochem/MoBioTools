@@ -69,9 +69,12 @@ class Align(object):
     # Displace COMs
     def translate(self):
         print("Translate called") 
-        CD_A = np.average(self.A, axis = 0, weights = self.atom_weights)
+#        CD_A = np.average(self.A, axis = 0, weights = self.atom_weights)
+#        print(CD_A)
+#        CD_B = np.average(self.B, axis = 0, weights = self.atom_weights)
+        CD_A = np.average(self.A, axis = 0)
         print(CD_A)
-        CD_B = np.average(self.B, axis = 0, weights = self.atom_weights)
+        CD_B = np.average(self.B, axis = 0)
         self.displ_vec = CD_A - CD_B
         print("displ vec")
         print(self.displ_vec)

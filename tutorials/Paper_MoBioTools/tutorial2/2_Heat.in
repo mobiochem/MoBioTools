@@ -1,0 +1,49 @@
+&cntrl
+   imin=0,        ! No minimization
+   irest=0,       ! This is NOT a restart of an old MD simulation
+   ntx=1,         ! So our inpcrd file has no velocities
+
+   ! Temperature control
+   ntt=3,         ! Langevin dynamics
+   gamma_ln=1.0,  ! Friction coefficient (ps^-1) Langevin thermostat 
+                  ! collision frequency
+   tempi=0.0,     ! Initial temp -- give it some small random 
+                  ! velocities
+   temp0=303.15,  ! Target temperature
+
+   ! Potential energy control
+   cut=12.0,      ! nonbonded cutoff, in angstroms
+   fswitch=10.0,  ! Force-based switching
+
+   ! MD settings
+   nstlim=500000, ! 1ns
+   dt=0.002,      ! time step (ps)
+   ntb=1,         ! Periodic boundaries for constant volume
+   ntp=0,         ! No pressure control
+
+   ! SHAKE
+   ntc=2,         ! Constrain bonds containing hydrogen
+   ntf=2,         ! Do not calculate forces of bonds containing 
+                  ! hydrogen
+
+   ! Control how often information is printed
+   ntpr=100,     ! Print energies every 1000 steps
+   ntwx=100,     ! Print coordinates every 5000 steps to the 
+                 ! trajectory
+
+   ! Wrap coordinates when printing them to the same unit cell
+   iwrap=1,
+   ig=-1,        ! Randomize the seed for the pseudo-random number 
+                 ! generator
+
+   ! Restraint options
+   nmropt=1,      ! NMR restraints and weight changes read
+
+/
+! Allow the thermostat to change its target temperature throughout
+the simulation.
+&wt type='TEMP0', istep1=0, istep2=250000, value1=0.0, value2=300.0 /
+&wt type='TEMP0', istep1=250001, istep2=500000, 
+value1=300.0, value2=300.0 /
+&wt type='END' / 
+

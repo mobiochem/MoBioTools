@@ -1,0 +1,26 @@
+Heat
+ &cntrl
+  imin=0,           ! Not a minimization
+  ntx=1,
+  irest=0,
+  nstlim=500000,    ! Number of steps
+  dt=0.002,         ! Timestep
+  ntf=2,            ! SHAKE algorithm
+  ntc=2,            ! SHAKE algorithm
+  tempi=0.0,        ! Initial Temperature
+  temp0=300.0,      ! Final Temperature
+  ntpr=100,         ! Frequency of printing
+  ntwx=100,         ! Fequency of snapshot
+  cut=12.0,         ! Cutoff
+  fswitch=10.0,     ! Switching function
+  ntb=1,            ! Periodic boundary conditions
+  ntp=0,            ! No pressure control
+  ntr=0,            
+  ntt=3,            ! Langevin thermostat
+  gamma_ln=2.0,     ! Collision frequency
+  nmropt=1,         ! Restraints
+  ig=-1,            ! Random seed
+ /
+&wt type='TEMP0', istep1=0, istep2=250000, value1=0.0, value2=300.0 /
+&wt type='TEMP0', istep1=250001, istep2=500000, value1=300.0, value2=300.0 /
+&wt type='END' /

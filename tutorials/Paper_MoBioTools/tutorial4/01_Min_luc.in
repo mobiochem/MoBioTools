@@ -1,0 +1,25 @@
+Minimization input file in explicit solvent
+&cntrl
+   ! Minimization options
+   imin=1,         ! Turn on minimization
+   ntx=1,          ! Read position but not velocities 
+                   !(5 for reading also velocities)
+   irest=0,        ! Do not restart (=1) the simulation
+   maxcyc=10000,   ! Maximum number of minimization cycles
+   ncyc=5000,      ! Method switched from steepest descent to 
+                    !conjugate gradient after NCYC
+   ntb=1,          ! PBC cte V
+   iwrap=1,
+
+   ! Potential energy function options
+   cut=9.0,        ! Nonbonded cutoff in Angstroms
+   fswitch=7.0,    ! Van der Waal cutoff
+
+   !Restraint options
+   nmropt=1,       !Restraints
+
+   ! Control how often information is printed to the output file
+   ntpr=100,       ! Print energies every 100 steps
+   ntwx=0,         ! No trajectory file
+/
+&wt type = 'END' /

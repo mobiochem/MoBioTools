@@ -1,0 +1,11 @@
+&header
+&end
+
+&route
+!B3LYP/6−311G*
+&end
+&externchg
+&end
+&chgspin
+0 1 (1 2)
+&end

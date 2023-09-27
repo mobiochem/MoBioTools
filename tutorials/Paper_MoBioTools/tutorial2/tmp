@@ -1,0 +1,9 @@
+mon1    #Name of the Gaussian formatted checkpoitn file for the first 
+        #monomer
+mon2    #Name of the Gaussian formatted checkpoitn file for the second 
+        #monomer
+complex #Name of the Gaussian formatted checkpoitn file for the complex HF        
+HF      #Level of theory employed for the electron densities. HF also 
+        #applies to DFT calculations
+thre 9  #Threshold employed for the two-electron integrals. N = 9 is the
+        #recommended value (10^-N)

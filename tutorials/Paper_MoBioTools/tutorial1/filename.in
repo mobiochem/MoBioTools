@@ -1,0 +1,8 @@
+source leaprc.gaff2
+source leaprc.water.tip3p
+loadamberparams filename.frcmod
+UNL = loadmol2 filename.mol2
+solvateoct UNL TIP3PBOX 12
+(addions2 UNL Cl- 0)
+saveamberparm UNL filename.prmtop filename.rst7
+quit

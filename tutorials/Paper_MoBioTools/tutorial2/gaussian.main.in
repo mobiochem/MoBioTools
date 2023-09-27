@@ -1,0 +1,9 @@
+&main
+tpl   = gaussian
+top   = tyr_solv.prmtop
+traj  = tyr_solv.nc
+qmmask = @1-24
+geoms = 0 100 2
+solvmask = :WAT
+closest = 10
+&end

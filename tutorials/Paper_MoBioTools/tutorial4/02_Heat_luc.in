@@ -1,0 +1,43 @@
+Heat
+ &cntrl
+  imin=0,         ! Turn off minimization
+  ntx=1,          ! Read position but not velocities (5 for reading 
+                  !also velocities)
+  irest=0,        ! Do not restart (=1) the simulation
+
+  nstlim=50000,   ! Perform MD for 50000 steps
+  dt=0.002,       ! 2 fs time step
+  ntf=2, ntc=2,   ! Shake hydrogen atoms
+  tempi=0.0,      ! Initial temperature
+  temp0=300.0,    ! Target temperature
+
+  ! Control how often information is printed to the output file
+  ntpr=100,       ! Energy information will be printed every ntpr steps
+  ntwx=100,       ! Coordinates written to the mdcrd file 
+                  !every ntwx steps
+
+  ! Potential energy function options
+  cut=9.0,        ! Nonbonded cutoff in Angstroms
+  fswitch=7.0,    ! Van der Waal cutoff
+
+  ! Ensemble control
+  ntb=1,          ! PBC cte V
+  ntp=0,          ! No pressure scaling (Default)
+  ntt=3,          ! Langevin dynamics
+  gamma_ln=2.0,   ! Collision frequency for the Langevin
+                  !dynamics in ps-1
+
+  ! Wrap coordinates when printing them to the same unit cell
+  nmropt=1,
+  iwrap=1,
+
+  ig=-1,          ! Random seed to use to generate velocity distribution
+ /
+! Change conditions during simulation
+! Simulation increases T from 0 to 300K during steps 0 to 25000
+&wt type='TEMP0', istep1=0, istep2=25000, value1=0.0, value2=300.0 /
+! Keep T cte for the rest of the simulation
+&wt type='TEMP0', istep1=250001, 
+istep2=50000, value1=300.0, 
+value2=300.0 /
+&wt type='END' /

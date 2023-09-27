@@ -1,0 +1,13 @@
+! Opt B3LYP 6−311G(d) CPCM(Water)
+%pal  nprocs 8 end
+
+%maxcore 3000
+
+%scf
+ maxiter 1500
+end
+
+%geom
+ maxiter 1500
+end
+*xyzfile 0 1 guanine.pdb

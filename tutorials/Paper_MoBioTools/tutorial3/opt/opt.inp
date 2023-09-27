@@ -1,0 +1,9 @@
+&GATEWAY
+Title= P-diaminoazobenzene
+coord = paz.xyz; basis = cc-pvdz; group = c1
+
+>>> Do while
+  &SEWARD
+  &SCF  ;  Title="P-diamino optimization";  KSDFT=B3LYP
+  &SLAPAF  &END
+>>>  EndDo

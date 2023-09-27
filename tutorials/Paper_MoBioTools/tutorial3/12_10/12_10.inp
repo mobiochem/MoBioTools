@@ -1,0 +1,16 @@
+&GATEWAY
+Title = P-diaminoazobenzene 
+coord = opt.xyz; basis = CC-PVDZ; group = c1
+&SEWARD; 
+
+>>>COPY $CurrDir/16_10.RasOrb $WorkDir/INPORB
+
+&RASSCF
+LumOrb
+nActEl = 12 0 0;
+Inactive = 50; Ras2 = 10 ;
+Symmetry = 1;
+Spin = 1;
+CiRoot = 10 10 1
+alter = 1 
+1 49 52

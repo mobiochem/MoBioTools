@@ -1,0 +1,15 @@
+set term png
+set output 'plot.spectrum_SUMMARY_STEPS.png'
+
+set key font ",20" spacing "1.5"
+
+set xtics font ",15"
+set ytics font ",15"
+
+unset key
+
+set xlabel "Absorption Energy (eV)" font ",20"
+set ylabel "Intensity" font ",20" offset 2,0,0
+
+p 'spectrum_SUMMARY_STEPS.dat' u 1:2 w l
+lc rgb "#D52D00" lw 3

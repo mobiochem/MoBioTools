@@ -1,0 +1,11 @@
+source leaprc.gaff2       # source leaprc file for gaff
+
+OLU=loadmol2 OLU.mol2     # load mol2 file of the
+oxyluciferine
+saveoff OLU OLU.lib       # create library of the
+oxyluciferine
+
+AMP=loadmol2 AMP.mol2     # load mol2 file of the AMP
+saveoff AMP AMP.lib       # create library of the AMP
+
+quit

@@ -1,0 +1,7 @@
+&main
+tpl   = molcas
+top   = system.parm7
+traj  = 100f.nc
+qmmask = :587
+geoms = 0 100 1
+&end 

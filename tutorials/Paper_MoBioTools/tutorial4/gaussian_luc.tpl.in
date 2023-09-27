@@ -1,0 +1,15 @@
+&header
+%NprocShared=4
+%mem=16GB
+&end
+
+&route
+#p B3LYP/6-31G NoSym TD(singlets,nstates=10)
+&end
+
+&externchg
+&end
+
+&chgspin
+-1,1
+&end

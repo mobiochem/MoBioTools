@@ -1,0 +1,25 @@
+Prod
+ &cntrl
+  imin=0,
+  ntx=7,
+  irest=1,
+  nstlim=100000000,
+  dt=0.002,
+  ntf=2,
+  ntc=2,
+  temp0=300.0,
+  ntpr=20000,
+  ntwx=20000,
+  ntwr=20000,
+  cut=12.0,
+  fswitch=10.0,
+  ntb=2,
+  ntp=1,            ! Pressure control (Berendsen barostat)
+  ntr=0,
+  ntt=3,
+  gamma_ln=2.0,
+  pres0=1.0,        ! Pressure 1 bar
+  comp=44.6,        ! Compressibility coefficient
+  taup=2.0,         ! Pressure relaxation time
+  ig=-1,
+ /

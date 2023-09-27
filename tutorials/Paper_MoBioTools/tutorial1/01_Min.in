@@ -1,0 +1,19 @@
+Minimization input file in explicit solvent
+&cntrl
+ ! Minimization options
+ imin=1,        ! Turn on minimization
+ ntx=1,
+ irest=0,
+ maxcyc=10000,   ! Maximum number of minimization cycles
+ ncyc=5000,      ! Number of steps of Steepest descent algorithm
+ ntr=0,
+ ntb=1,          ! Periodic boundary conditions
+
+ ! Potential energy function options
+ cut=12.0,       ! Cutoff
+ fswitch=10.0,   ! Switching function
+
+ ! Control how often information is printed to the output file
+ ntpr=100,      ! Print energies every 100 steps
+ ntwx=0,
+/

@@ -1,0 +1,8 @@
+&main
+tpl   = gaussian
+top   = final_system.prmtop
+traj  = 03_prod.nc
+qmmask = :OLU
+geoms = variabless
+solvmask =:WAT
+&end

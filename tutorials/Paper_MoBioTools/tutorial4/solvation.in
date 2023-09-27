@@ -1,0 +1,22 @@
+source leaprc.gaff2                # source leaprc file for gaff
+source leaprc.protein.ff19SB       # source leaprc file for ff19SB 
+                                     protein force field
+source leaprc.water.tip3p          # source leaprc file for TIP3P 
+                                     water model
+loadamberparams OLU.frcmod         # load OLU parameters
+loadamberparams AMP.frcmod         # load AMP parameters
+
+loadoff OLU.lib                    # load library for OLU
+loadoff AMP.lib                    # load library for AMP
+SYS=loadpdb system2.pdb            # load whole system
+
+solvateOct SYS TIP3PBOX 5.0        # solvate system with H2O with 
+                                     truncated octaedron box of 5 A
+addIons2 SYS Na+ 0                 # add ions - cell net charge 
+                                     must be 0
+
+savepdb SYS final_system.pdb       # save pdb of the whole system
+saveamberparm SYS final_system.prmtop final_system.rst7          
+                                    #save pamerters 
+
+quit

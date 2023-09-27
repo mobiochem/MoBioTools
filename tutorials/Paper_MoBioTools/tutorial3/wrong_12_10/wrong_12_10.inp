@@ -1,0 +1,12 @@
+&GATEWAY
+Title= Acrolein molecule
+coord = opt.xyz; basis = CC-PVDZ; group = c1
+&SEWARD;
+&SCF
+&RASSCF
+LumOrb
+nActEl = 12 0 0;
+Inactive = 50; Ras2 = 10 ;
+Symmetry = 1;
+Spin = 1;
+CiRoot = 10 10 1

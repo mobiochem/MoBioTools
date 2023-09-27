@@ -1,0 +1,8 @@
+&main
+tpl = orca
+top = filename.prmtop
+traj = 04_Prod.nc
+qmmask = :UNL
+geoms = variabless
+solvmask =:WAT
+&end

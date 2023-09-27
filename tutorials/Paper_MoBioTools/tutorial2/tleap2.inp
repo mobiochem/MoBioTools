@@ -1,0 +1,16 @@
+source leaprc.gaff2                              # source leaprc file 
+                                                   for gaff
+source leaprc.water.tip3p                        # source leaprc file 
+                                                   for tip3p
+loadamberparams tyr.frcmod                       # load tyr parameters
+loadoff tyr.lib                                  # load tyr library
+TYR=loadpdb tyr.pdb                              # load whole system
+solvateOct TYR TIP3PBOX 12.0                     # solvate system 
+                                                   with water with 
+                                                   truncated octahedron 
+                                                   box of 12.0 A 
+addions2 TYR Na+ 0                               # add ions
+addions2 TYR Cl- 0                               # add ions
+savepdb TYR tyr_solv.pdb                         # save system
+saveamberparm TYR tyr_solv.prmtop tyr_solv.rst7  # save parameters
+quit

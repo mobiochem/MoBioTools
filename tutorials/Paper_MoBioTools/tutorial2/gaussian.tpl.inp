@@ -1,0 +1,25 @@
+&header
+%NprocShared=1
+%mem=2GB
+%chk=gau.chk
+&end
+
+&route
+#P M062X/6-31G(d) charge nosym integral=ultrafinegrid
+&end
+
+&externchg !Include MM point charges in the gaussian input
+&end
+
+&basis
+6-31G(d)
+&end
+
+&bsse
+mon1 = @1-24       
+mon2 = @25-12297
+&end
+
+&chgspin
+0,1,0,1,0,1
+&end

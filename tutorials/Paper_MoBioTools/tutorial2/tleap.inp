@@ -1,0 +1,6 @@
+source leaprc.gaff2         # source leaprc file for gaff
+source leaprc.water.tip3p   # source leaprc file for tip3p
+loadamberparams tyr.frcmod  # load tyr parameters
+UNK=loadmol2 tyr.mol2       # load whole system
+saveoff UNK tyr.lib         # save library of tyr
+quit  

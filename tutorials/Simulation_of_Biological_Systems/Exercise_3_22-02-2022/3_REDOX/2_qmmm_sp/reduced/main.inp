@@ -1,0 +1,7 @@
+&main
+tpl    = orca
+top    = MOL-red.prmtop
+traj   = red-im.mdcrd
+qmmask = :1
+geoms  = 0 99 
+&end

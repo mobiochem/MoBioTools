@@ -1,0 +1,9 @@
+&main
+tpl = orca
+top = system.parm7
+traj = imaged.crd
+qmmask = :1
+geoms = 6
+solvmask = :WAT
+closest = 1
+&end

@@ -1,0 +1,39 @@
+Heat
+ &cntrl
+  imin=0,          ! Turn off minimization  
+  ntx=1,           ! Our starting file has no input velocities 
+  irest=0,         ! This is NOT a restart of an old MD simulation
+  nstlim=3000,
+  dt=0.002,
+
+
+  ntf=2,           !Setting to not calculate force for SHAKE constrained bonds
+  ntc=2,           !Enable SHAKE to constrain all bonds involving hydrogen
+
+
+  tempi=0.0,       !Initial thermostat temperature in K (see NMROPT section)
+  temp0=300.0,     !Final thermostat temperature in K (see NMROPT section)
+
+
+
+  ntpr=10,         ! Print energies every 10 steps
+  ntwx=100         ! Print coordinates every 100 steps to the trajectory
+  ioutfm=0,
+  cut=8.0,         ! Nonbonded cutoff, in Angstroms
+  iwrap=1, 
+
+  ntb=1,           !Periodic boundaries for constant volume
+  ntp=0,           !No pressure control
+  ntt=3,           !Temperature control with Langevin thermostat
+  gamma_ln=2.0,    !Langevin thermostat collision frequency
+
+
+  nmropt=1,        !NMR restraints and weight changes read
+  ig=-1,
+ /
+
+
+&wt type='TEMP0', istep1=0, istep2=2000, value1=0.0, value2=300.0 /
+&wt type='TEMP0', istep1=2000, istep2=3000, value1=300.0, value2=300.0 /
+&wt type='END' /
+

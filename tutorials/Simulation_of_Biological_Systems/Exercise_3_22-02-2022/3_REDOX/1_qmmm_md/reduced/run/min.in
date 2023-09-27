@@ -1,0 +1,11 @@
+Minimization
+&cntrl
+
+imin=1       ! Turn on minimization
+maxcyc = 200 ! Maximum number of minimization cycles 
+ncyc = 100   ! 100 steepest-descent steps 
+
+ntpr = 2     ! Print energies every 2 steps 
+ntxo = 2     ! Print binary file 
+
+/

@@ -1,0 +1,15 @@
+&header
+!pbe def2-svp
+&end
+
+&externchg
+&end
+
+&chgspin
+0,1
+&end
+
+&tddft
+mode sTDA
+ethresh 5.0
+&end

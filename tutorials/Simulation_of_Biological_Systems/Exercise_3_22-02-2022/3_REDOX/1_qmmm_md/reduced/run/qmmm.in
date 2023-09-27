@@ -1,0 +1,42 @@
+Production
+&cntrl
+ imin       = 0        ! No minimization but molecular dynamics
+ irest      = 0        ! Simulation is NOT a restart
+ ntx        = 1        ! Velocities and box info NOT read
+
+ ntb        = 2        ! PBCs in the NPT ensemble
+
+ ntp        = 1        ! Isotropic scaling of volumen
+ barostat   = 1        ! Berendsen barostat
+ pres0      = 1.0      ! Pressure in bars
+ taup       = 2.0      ! Relaxation time is ps
+
+ cut        = 8.0      ! Cutoff for L-J and real-space Ewald int
+ ntc        = 2        ! Enable SHAKE to  constraint  a l l  bonds  with H
+ ntf        = 2        ! No bond interactions involving H 
+
+ tempi      = 300.0    ! Final temperature
+ ntt        = 3        ! Langevin thermostat
+ gamma_ln   = 1.0      ! Collision frequency in ps-1
+
+ nstlim     = 100     ! Number of time steps
+ dt         = 0.002    ! Time step in ps
+
+ ntpr       = 1        ! Energy is printed every N steps
+ ntwx       = 1        ! Trajectory is printed every N steps
+ ntwr       = 1        ! Restart file is printed every N steps
+ ntxo       = 1        ! ASCII format for final rst file
+ ioutfm     = 0        ! ASCII format for trajectory (xyz) file
+ ifqnt = 1                     ! QM/MM
+/
+&qmmm
+ qmmask    = ':1',     !  QM region mask 
+ qmcharge  = 0,        !  QM region charge 
+ qmcut     = 8.0,      !  QM region LJ cutoff 
+ qm_ewald  = 0,
+ qm_theory = 'EXTERN', !  Call external program
+/
+&orc
+method = 'XTB',
+
+/

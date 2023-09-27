@@ -1,0 +1,11 @@
+source leaprc.gaff
+source leaprc.water.tip3p
+
+MOL = loadmol2 lig-red.mol2
+loadamberparams lig-red.frcmod
+
+SolvateOct MOL TIP3PBOX 30
+
+saveamberparm MOL MOL-red.prmtop MOL-red.inpcrd
+savepdb MOL MOL-red.pdb
+quit

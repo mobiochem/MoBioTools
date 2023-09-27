@@ -1,0 +1,7 @@
+&main
+tpl = orca
+top = system.parm7
+traj = imaged.crd
+qmmask = :1
+geoms = 0 9
+&end

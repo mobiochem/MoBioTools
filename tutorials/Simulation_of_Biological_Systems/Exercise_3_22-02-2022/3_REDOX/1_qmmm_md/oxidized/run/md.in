@@ -1,0 +1,30 @@
+Production
+ &cntrl
+  imin       = 0        ! No minimization but molecular dynamics
+  irest      = 1        ! Simulation is restarted from a previous simulation
+  ntx        = 7        ! Coordinates, velocities and box information is read from a previous simulation
+
+  ntb        = 2        ! Periodic Boundary Conditions in the NPT ensemble (V is allowed to change)
+
+  ntp        = 1        ! Isotropic scaling of volumen
+  barostat   = 1        ! Berendsen barostat
+  pres0      = 1.0      ! Pressure in bars
+  taup       = 2.0      ! Relaxation time is ps
+
+  cut        = 8.0     ! Cutoff for Lennard-Jones and real-space Ewald interactions
+  ntc        = 2        ! Bonds involving hydrogen atoms are constrained with SHAKE
+  ntf        = 2        ! Bond interactions involving hydrogen are not computed
+
+  tempi      = 300.0    ! Final temperature
+  ntt        = 3        ! Langevin thermostat
+  gamma_ln   = 1.0      ! Collision frequency in ps-1
+
+  nstlim     = 1000    ! Number of time steps
+  dt         = 0.002    ! Time step in ps
+
+  ntpr       = 1        ! Energy is printed every N steps
+  ntwx       = 10       ! Trajectory is printed every N steps
+  ntwr       = 20       ! Restart file is printed every N steps
+  ntxo       = 1        ! ASCII format for final coordinates, velocities and box size
+  ioutfm     = 0        ! ASCII format for trajectory (xyz) file
+ /

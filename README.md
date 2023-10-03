@@ -63,6 +63,7 @@ main_qminputs.py -i nwchem.main.in -t nwchem.tpl.inp > output.dat
 Further examples can be found under a set of tutorials in
 ```
 cd tutorials
+
 ```
 
 2. The program to automaticall correct the active space of a set of CASSCF calculations an ensemble of geometries (pyoverlaps.py, -h option to visualize the arguments it takes).  

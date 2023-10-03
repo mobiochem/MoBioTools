@@ -36,11 +36,6 @@ set manually the environment variables in the config.sh script, then source it. 
 ```
 source ./config.sh
 ```
-<<<<<<< HEAD
-=======
-
-
->>>>>>> b7729fe30f20ef0429e7851ce510caf08042d583
 
 # Usage
 The tools consist of two scripts with different functionalities:
